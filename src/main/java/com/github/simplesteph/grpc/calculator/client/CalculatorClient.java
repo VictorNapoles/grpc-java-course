@@ -28,7 +28,7 @@ public class CalculatorClient {
         System.out.println(response.getResult());
 
         */
-        PrimeNumberDecomposition number = PrimeNumberDecomposition.newBuilder().setNumber(9872621).build();
+        PrimeNumberDecomposition number = PrimeNumberDecomposition.newBuilder().setNumber(96759032).build();
         PrimeNumberDecompositionRequest request = PrimeNumberDecompositionRequest.newBuilder().setRequest(number).build();
         Iterator<PrimeNumberDecompositionResponse> results = service.primeNumberDecomposition(request);
         results.forEachRemaining(res ->{
