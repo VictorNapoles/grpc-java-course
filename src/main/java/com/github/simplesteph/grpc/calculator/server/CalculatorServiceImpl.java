@@ -3,6 +3,10 @@ package com.github.simplesteph.grpc.calculator.server;
 import com.proto.calculator.*;
 import io.grpc.stub.StreamObserver;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.OptionalDouble;
+
 public class CalculatorServiceImpl extends CalculatorServiceGrpc.CalculatorServiceImplBase {
     @Override
     public void calculate(CalculatorRequest request, StreamObserver<CalculatorResponse> responseObserver) {
@@ -38,5 +42,31 @@ public class CalculatorServiceImpl extends CalculatorServiceGrpc.CalculatorServi
         }
         
         responseObserver.onCompleted();
+    }
+
+    @Override
+    public StreamObserver<ComputeAverageRequest> computeAverage(StreamObserver<ComputeAverageResponse> responseObserver) {
+        return new StreamObserver<ComputeAverageRequest>() {
+            List<Integer> numbers = new ArrayList<>();
+
+            @Override
+            public void onNext(ComputeAverageRequest value) {
+                numbers.add(value.getNumber());
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                responseObserver.onError(t);
+            }
+
+            @Override
+            public void onCompleted() {
+                OptionalDouble average = numbers.stream().mapToInt(Integer::intValue).average();
+                ComputeAverageResponse response = ComputeAverageResponse.newBuilder().setResult(average.getAsDouble()).build();
+
+                responseObserver.onNext(response);
+                responseObserver.onCompleted();
+            }
+        };
     }
 }
